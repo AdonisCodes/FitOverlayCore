@@ -1,0 +1,17 @@
+FROM swift:6.1-noble AS build
+
+RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
+    && apt-get -q update \
+    && apt-get -q dist-upgrade -y \
+    && apt-get install -y curl pkg-config openssl libssl-dev \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && apt-get remove --purge -y curl
+
+RUN npm install -g nodemon && apt-get remove npm -y
+
+WORKDIR /app
+
+EXPOSE 8080
+
+CMD bash -c "nodemon -w ./ -w .env -e '.' --ignore ./.build --exec 'swift run App --env local $RUN_COMMAND'"

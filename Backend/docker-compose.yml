@@ -1,0 +1,54 @@
+services:
+  api-dev:
+    env_file:
+      - ./.env.local
+    volumes:
+      - ./:/app/
+      - /app/.build
+      - api_build:/app/.build
+    build:
+      context: .
+      dockerfile: ./DevDockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      RUN_COMMAND: "serve --hostname 0.0.0.0"
+    network_mode: host
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 10s
+      retries: 120
+    network_mode: host
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: "5050"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    network_mode: host
+
+volumes:
+  postgres_data:
+    driver: local
+  api_build:
+    driver: local
+  pgadmin_data:
