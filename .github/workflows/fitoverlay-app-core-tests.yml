@@ -1,0 +1,33 @@
+name: Run `FitOverlayApp - CORE (macOS)` Tests
+
+on:
+  pull_request:
+    paths:
+      - "App/FitOverlayApp/**"
+      - "App/FitOverlayAppShared/**/*.swift"
+      - "App/FitOverlayUIKit/**/*.swift"
+      - ".github/workflows/fitoverlay-app-core-tests.yml"
+
+jobs:
+  fitoverlay-app-build-and-shared-tests:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build macOS App
+        working-directory: ./App/FitOverlayApp
+        run: |
+          xcodebuild build \
+            -project FitOverlayApp.xcodeproj \
+            -scheme MACOS \
+            -destination "platform=macOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY=""
+
+      - name: Run FitOverlayAppShared Tests
+        working-directory: ./App/FitOverlayAppShared
+        run: swift test
+
+      - name: Run FitOverlayUIKit Tests
+        working-directory: ./App/FitOverlayUIKit
+        run: swift test

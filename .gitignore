@@ -1,0 +1,35 @@
+# Swift / SPM
+**/.build/
+**/.index-build/
+**/.swiftpm/
+Packages
+DerivedData/
+db.sqlite
+
+# Xcode user state
+xcuserdata/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+timeline.xctimeline
+playground.xcworkspace
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+Backend/infra/docker-secrets/*
+
+# Editors / OS
+.vscode
+**/.DS_Store
+.nvim/
+
+# Node (repo tooling)
+node_modules/
+npm-debug.log*
+
+# Logs
+logs
+*.log

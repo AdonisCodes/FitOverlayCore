@@ -1,0 +1,10 @@
+# SwiftFormat configuration for FitOverlayCore
+--swiftversion 6.1
+--indent 4
+--maxwidth 120
+--wraparguments before-first
+--wrapcollections before-first
+--stripunusedargs closure-only
+--self remove
+--importgrouping alpha
+--exclude **/.build,**/.swiftpm,App/FitOverlayUIKit/Sources/FitOverlayUIKit/Core/Generated

@@ -1,0 +1,69 @@
+name: Run `FitOverlayBackend` Tests
+
+on:
+  pull_request:
+    paths:
+      - "Backend/**/*.swift"
+      - "Backend/Package.swift"
+      - ".github/workflows/fitoverlay-backend-testing.yml"
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: SwiftyLab/setup-swift@latest
+        with:
+          swift-version: "6.1"
+
+      - uses: actions/cache@v4
+        with:
+          path: Backend/.build
+          key: ${{ runner.os }}-backend-unittests-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: ${{ runner.os }}-backend-unittests-
+
+      - name: Run Unit Tests
+        working-directory: Backend
+        run: swift test --filter '.*UnitTests.*'
+
+  integration-tests:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 5s
+          --health-timeout 10s
+          --health-retries 20
+    env:
+      PRIMARY_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/postgres?tlsmode=disable
+      REGIONAL_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/postgres?tlsmode=disable
+      JWT_ENCRYPTION_SECRET: ci-test-secret
+      AUTHENTICATION_CODE_DISTANCE: "60"
+      TEST_CONTROLLERS_KEY: ci-test-key
+      ENVIRONMENT: ci
+      LOG_LEVEL: info
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: SwiftyLab/setup-swift@latest
+        with:
+          swift-version: "6.1"
+
+      - uses: actions/cache@v4
+        with:
+          path: Backend/.build
+          key: ${{ runner.os }}-backend-integrationtests-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: ${{ runner.os }}-backend-integrationtests-
+
+      - name: Run Integration Tests
+        working-directory: Backend
+        run: swift test --no-parallel --filter '.*IntegrationTests.*'
