@@ -6,10 +6,8 @@ on:
 
 jobs:
   cloc:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Count Lines of Code
-        run: |
-          sudo apt-get update -q && sudo apt-get install -y -q cloc
-          cloc --exclude-dir=.build,.swiftpm,node_modules,DerivedData .
+        uses: GetAutomaApp/opensource-actions/cloc@main

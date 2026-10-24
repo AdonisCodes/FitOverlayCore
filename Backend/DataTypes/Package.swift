@@ -4,28 +4,28 @@
 import PackageDescription
 
 /// The main package manifest for the DataTypes library.
-/// This package provides core data type definitions and utilities shared between the
-/// FitOverlay backend and the client applications.
+/// This package provides core data type definitions and utilities used across the application.
 ///
 /// The package requires:
 /// - macOS 15.0 or later
 /// - iOS 17.0 or later
-/// - Linux (for the backend and CI)
 ///
 /// Dependencies:
 /// - Vapor: Web framework for Swift
 /// - JWT: JSON Web Token implementation
-/// - Alamofire: HTTP networking library (Linux support since 5.10)
+/// - Alamofire: HTTP networking library
+/// - PhoneNumberKit: Phone number parsing and validation
 public let package = Package(
     name: "DataTypes",
     platforms: [
-        .macOS(.v15),
-        .iOS(.v17),
+        .macOS(.v15), // Minimum macOS version requirement
+        .iOS(.v17), // Minimum iOS version requirement
     ],
     products: [
+        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "DataTypes",
-            targets: ["DataTypes"]
+            name: "DataTypes", // Main library product
+            targets: ["DataTypes"] // Associated target
         ),
     ],
     dependencies: [
@@ -37,14 +37,27 @@ public let package = Package(
 
         /// Alamofire for simplified HTTP networking
         .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.10.0")),
+
+        /// PhoneNumberKit for phone number handling and validation
+        .package(url: "https://github.com/marmelroy/PhoneNumberKit", from: "4.0.2"),
     ],
     targets: [
+        // Targets are the basic building blocks of a package, defining a module or a test suite.
+        // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "DataTypes",
+            name: "DataTypes", // Main target name
             dependencies: [
+                /// Vapor framework integration
                 .product(name: "Vapor", package: "vapor"),
+
+                /// JWT functionality for authentication
                 .product(name: "JWT", package: "jwt"),
+
+                /// Networking capabilities
                 .product(name: "Alamofire", package: "Alamofire"),
+
+                /// Phone number parsing and validation
+                .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
             ]
         ),
     ]

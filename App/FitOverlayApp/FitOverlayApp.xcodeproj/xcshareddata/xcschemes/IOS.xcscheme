@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   LastUpgradeVersion = "1620"
+   version = "1.7">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES"
+      buildArchitectures = "Automatic">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "38F8D37A2CFA3F3700CC1E46"
+               BuildableName = "IOS.app"
+               BlueprintName = "IOS"
+               ReferencedContainer = "container:FitOverlayApp.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      shouldAutocreateTestPlan = "YES">
+      <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "38F8D38A2CFA3F3800CC1E46"
+               BuildableName = "IOSTests.xctest"
+               BlueprintName = "IOSTests"
+               ReferencedContainer = "container:FitOverlayApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "38F8D3942CFA3F3800CC1E46"
+               BuildableName = "IOSUITests.xctest"
+               BlueprintName = "IOSUITests"
+               ReferencedContainer = "container:FitOverlayApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3825E67B2DB7D692002FC6EB"
+               BuildableName = "IOSIntegrationTests.xctest"
+               BlueprintName = "IOSIntegrationTests"
+               ReferencedContainer = "container:FitOverlayApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3825E6882DB7D6A8002FC6EB"
+               BuildableName = "IOSUnitTests.xctest"
+               BlueprintName = "IOSUnitTests"
+               ReferencedContainer = "container:FitOverlayApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3825E6B12DB7D717002FC6EB"
+               BuildableName = "IOS-ADMINUnitTests.xctest"
+               BlueprintName = "IOS-ADMINUnitTests"
+               ReferencedContainer = "container:FitOverlayApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "385518FE2DBFC77700552736"
+               BuildableName = "IOS-UnitTests.xctest"
+               BlueprintName = "IOS-UnitTests"
+               ReferencedContainer = "container:FitOverlayApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3855190B2DBFC87300552736"
+               BuildableName = "IOS-IntegrationTests.xctest"
+               BlueprintName = "IOS-IntegrationTests"
+               ReferencedContainer = "container:FitOverlayApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "385519182DBFCC6A00552736"
+               BuildableName = "IOS-UITests.xctest"
+               BlueprintName = "IOS-UITests"
+               ReferencedContainer = "container:FitOverlayApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
+   </TestAction>
+   <LaunchAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
+      allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "38F8D37A2CFA3F3700CC1E46"
+            BuildableName = "IOS.app"
+            BlueprintName = "IOS"
+            ReferencedContainer = "container:FitOverlayApp.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </LaunchAction>
+   <ProfileAction
+      buildConfiguration = "Release"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "38F8D37A2CFA3F3700CC1E46"
+            BuildableName = "IOS.app"
+            BlueprintName = "IOS"
+            ReferencedContainer = "container:FitOverlayApp.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </ProfileAction>
+   <AnalyzeAction
+      buildConfiguration = "Debug">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+</Scheme>

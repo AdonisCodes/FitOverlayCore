@@ -1,0 +1,40 @@
+name: Fly Deploy To Sandbox
+
+on:
+  push:
+    branches:
+      - develop
+      - simon/automa-cli-build-integration
+
+jobs:
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-24.04
+    concurrency: deploy-group-sandbox
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - uses: SwiftyLab/setup-swift@latest
+        with:
+          swift-version: "6.2"
+
+      - name: Get Cache
+        uses: actions/cache@v4
+        id: backend-build
+        with:
+          key: deploy-cache-${{ hashFiles('Backend/Package.resolved') }}
+          path: Backend/.build
+
+      - name: Get AutomaCLI 
+        uses: GetAutomaApp/private-actions/get-automacli@main
+        with:
+          github_pat: ${{ secrets.GET_AUTOMACLI_GH_PAT }}
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: |
+          npm run deploy:backend:sandbox
+          npm run deploy:worker:sandbox
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_SANDBOX_API_KEY }}
+      FLY_METRICS_TOKEN: ${{ secrets.FLY_METRICS_TOKEN }}

@@ -1,0 +1,33 @@
+{
+  "originHash" : "b1ceb43b66d4d0b444305c2ee66d56b27e3a0be118feb1859a75617938c525a8",
+  "pins" : [
+    {
+      "identity" : "phonenumberkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/marmelroy/PhoneNumberKit",
+      "state" : {
+        "revision" : "288b99e9e99926bc8be41220802df83c059fac9b",
+        "version" : "4.0.2"
+      }
+    },
+    {
+      "identity" : "viewextractor",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/GetAutomaApp/ViewExtractor",
+      "state" : {
+        "revision" : "e20b1944524d4454c2a65c0054ce345c2c5d0185",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "viewinspector",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nalexn/ViewInspector",
+      "state" : {
+        "revision" : "5acfa0a3c095ac9ad050abe51c60d1831e8321da",
+        "version" : "0.10.0"
+      }
+    }
+  ],
+  "version" : 3
+}

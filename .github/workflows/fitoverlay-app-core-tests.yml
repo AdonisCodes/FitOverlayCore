@@ -1,33 +1,59 @@
-name: Run `FitOverlayApp - CORE (macOS)` Tests
+name: Run `FitOverlayApp - CORE (IOS)` Tests
 
 on:
   pull_request:
     paths:
-      - "App/FitOverlayApp/**"
+      - "App/FitOverlayApp/Core/**/*.swift"
       - "App/FitOverlayAppShared/**/*.swift"
-      - "App/FitOverlayUIKit/**/*.swift"
-      - ".github/workflows/fitoverlay-app-core-tests.yml"
 
 jobs:
-  fitoverlay-app-build-and-shared-tests:
-    runs-on: macos-15
-    steps:
-      - uses: actions/checkout@v4
+    fitoverlay-app-core-unit-and-integration-tests:
+        runs-on: macos-15
+        steps:
+          - uses: actions/checkout@v4
 
-      - name: Build macOS App
-        working-directory: ./App/FitOverlayApp
-        run: |
-          xcodebuild build \
-            -project FitOverlayApp.xcodeproj \
-            -scheme MACOS \
-            -destination "platform=macOS" \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGN_IDENTITY=""
+          - uses: irgaly/xcode-cache@v1
+            with:
+              key: xcode-cache-deriveddata-${{ github.workflow }}
+              restore-keys: xcode-cache-deriveddata-${{ github.workflow }}
 
-      - name: Run FitOverlayAppShared Tests
-        working-directory: ./App/FitOverlayAppShared
-        run: swift test
+          - name: Run Tests
+            uses: GetAutomaApp/opensource-actions/xctesting@main
+            with:
+              working-directory: "./App/FitOverlayApp/"
+              schema: "IOS"
+              destination: "platform=iOS Simulator,name=iPhone 16,OS=18.1"
+              testing-targets: "IOS-IntegrationTests,IOS-UnitTests"
 
-      - name: Run FitOverlayUIKit Tests
-        working-directory: ./App/FitOverlayUIKit
-        run: swift test
+    fitoverlay-app-core-ui-tests:
+        runs-on: macos-15
+        steps:
+          - uses: actions/checkout@v4
+
+          - uses: irgaly/xcode-cache@v1
+            with:
+              key: xcode-cache-deriveddata-${{ github.workflow }}
+              restore-keys: xcode-cache-deriveddata-${{ github.workflow }}
+
+          - name: Run UI Tests
+            uses: GetAutomaApp/opensource-actions/xctesting@main
+            with:
+              working-directory: "./App/FitOverlayApp/"
+              schema: "IOS"
+              destination: "platform=iOS Simulator,name=iPhone 16,OS=18.1"
+              testing-targets: "IOS-UITests"
+
+    fitoverlay-mac-app-build:
+        runs-on: macos-15
+        steps:
+          - uses: actions/checkout@v4
+
+          - name: Build macOS App
+            working-directory: ./App/FitOverlayMacApp
+            run: |
+              xcodebuild build \
+                -project FitOverlayMacApp.xcodeproj \
+                -scheme MACOS \
+                -destination "platform=macOS" \
+                CODE_SIGNING_ALLOWED=NO \
+                CODE_SIGN_IDENTITY=""

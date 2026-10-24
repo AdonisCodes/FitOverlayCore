@@ -7,7 +7,7 @@ The InfoPairComponent functions as an information excerpt to be displayed to the
 The `InfoPairComponent` is a foundational component used to create info pairs which consists of a title & subtext components. This component has many varients, allowing you to effectively create any style of `InfoPair` you could possibly want. FitOverlayUIKit extends the InfoPair component on many occasions to create more specialized implementations.
 
 ## Design
-LINK: [FIGMA](https://www.figma.com/design/x5MkR0UFRMUkp0eiAXVbmy/FitOverlayUIKit)
+LINK: [FIGMA](https://www.figma.com/design/x5MkR0UFRMUkp0eiAXVbmy/FitOverlayUIKit?node-id=635-397)
 
 ## Usage
 <!-- Explain how to use the component here -->

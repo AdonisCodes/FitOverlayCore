@@ -1,7 +1,7 @@
 # ================================
 # Build image
 # ================================
-FROM swift:6.1-noble AS build
+FROM swift:6.2.0-jammy AS build
 
 # Install OS updates
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
@@ -17,12 +17,16 @@ WORKDIR /build
 # This creates a cached layer that can be reused
 # as long as your Package.swift/Package.resolved
 # files do not change.
+
+RUN --mount=type=secret,id=GITHUB_SSH_AUTHENTICATION_TOKEN \
+    TOKEN=$(cat /run/secrets/GITHUB_SSH_AUTHENTICATION_TOKEN) && \
+    git config --global url."https://x-access-token:${TOKEN}@github.com/".insteadOf "https://github.com/"
+
 COPY Package.swift .
-COPY Package.resolved* ./
+COPY Package.resolved .
 
 COPY DataTypes ./DataTypes
 RUN --mount=type=cache,target=/build/.build swift package resolve
-
 # Copy entire repo into container
 COPY . .
 
@@ -52,7 +56,7 @@ RUN [ -d /build/Resources ] && { mv /build/Resources ./Resources && chmod -R a-w
 # ================================
 # Run image
 # ================================
-FROM ubuntu:noble
+FROM ubuntu:jammy
 
 # Make sure all system packages are up to date, and install only essential packages.
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
@@ -63,7 +67,7 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     ca-certificates \
     tzdata \
     && apt-get install bash \
-    && apt-get install -y openssl libcurl4 libxml2 \
+    && apt-get install -y openssl libssl-dev libcurl4 libxml2 \
     && rm -r /var/lib/apt/lists/*
 
 # Create a vapor user and group with /app as its home directory
@@ -83,5 +87,8 @@ USER vapor:vapor
 
 # Let Docker bind to port 8080
 EXPOSE 8080
+
+# Expose PrometheusService server port 
+EXPOSE 6834
 
 CMD /bin/bash -c "eval './App $RUN_COMMAND'"

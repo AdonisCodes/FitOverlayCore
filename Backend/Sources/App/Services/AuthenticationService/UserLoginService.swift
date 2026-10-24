@@ -1,8 +1,9 @@
 // UserLoginService.swift
-// Copyright (c) 2026 FitOverlay
+// Copyright (c) 2025 FitOverlay
 // All source code and related assets are the property of FitOverlay.
 // All rights reserved.
 
+import AutomaUtilities
 import DataTypes
 import Fluent
 import JWT
@@ -11,9 +12,9 @@ import Vapor
 internal struct UserLoginService: AuthenticationService {
     internal var helper: AuthenticationServiceHelper
     private let config: UserLoginConfig
-    internal var eventService = EventNotificationService()
+    internal var messageService = MessageService()
 
-    /// Initializes user login service
+    /// INitializes user login service
     public init(_ config: UserLoginConfig) {
         self.config = config
         helper = .init(.init(writeDb: config.writeDb, readDb: config.readDb, logger: config.logger))
@@ -52,14 +53,14 @@ internal struct UserLoginService: AuthenticationService {
             throw GenericErrors.userNotFound
         }
 
-        try sendLoginEvent(for: user)
+        try sendLoginWebhook(for: user)
         logUserLogin(userId: userId.uuidString, username: user.username)
 
         return try await helper.createAuthenticationTokensPayload(.init(userId: userId, signer: config.payload.signer))
     }
 
-    private func sendLoginEvent(for user: UserModel) throws {
-        try eventService.sendAppEvent(
+    private func sendLoginWebhook(for user: UserModel) throws {
+        try messageService.sendDiscordWebhookAppEvent(
             input: "\(config.payload.authCodePayload.phoneNumber) - \(user.username)",
             event: "logging in with code: `\(config.payload.authCodePayload.code)`",
             logger: config.logger

@@ -1,0 +1,21 @@
+app = 'fitoverlay-backend-temporal-worker-__FLY_ENVIRONMENT__'
+primary_region = 'jnb'
+
+[env]
+RUN_COMMAND = 'temporal-worker'
+
+[http_service]
+internal_port = 8080
+force_https = true
+auto_stop_machines = 'off'
+auto_start_machines = false
+min_machines_running = 0
+
+[[vm]]
+memory = '1gb'
+cpu_kind = 'shared'
+cpus = 2
+
+[[metrics]]
+port = 6834
+path = '/metrics'

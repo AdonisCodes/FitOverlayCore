@@ -3,6 +3,7 @@
 // All source code and related assets are the property of FitOverlay.
 // All rights reserved.
 
+import AutomaUtilities
 import DataTypes
 import Fluent
 import Vapor
@@ -11,7 +12,7 @@ import Vapor
 /// across platforms, and purchase fulfilment.
 internal struct LicenseService {
     private let config: LicenseServiceConfig
-    private let eventService = EventNotificationService()
+    private let messageService = MessageService()
 
     /// Default number of devices a licence can be active on at the same time.
     public static let defaultMaxActivations = 5
@@ -50,7 +51,7 @@ internal struct LicenseService {
         try await license.create(on: config.writeDb)
 
         BackendMetric.totalPurchaseWebhooksReceived.increment()
-        try eventService.sendAppEvent(
+        try messageService.sendDiscordWebhookAppEvent(
             input: event.customerEmail ?? "unknown-customer",
             event: "purchased a \(event.plan.rawValue) licence via \(event.provider.rawValue)",
             logger: config.logger
@@ -94,7 +95,7 @@ internal struct LicenseService {
         ).create(on: config.writeDb)
 
         BackendMetric.totalLicenseActivations.increment()
-        try eventService.sendAppEvent(
+        try messageService.sendDiscordWebhookAppEvent(
             input: payload.deviceIdentifier,
             event: "activated licence \(license.key) on \(payload.platform.rawValue)",
             logger: config.logger

@@ -1,8 +1,9 @@
 // entrypoint.swift
-// Copyright (c) 2026 FitOverlay
+// Copyright (c) 2025 FitOverlay
 // All source code and related assets are the property of FitOverlay.
 // All rights reserved.
 
+import AutomaUtilities
 import Logging
 import NIOCore
 import NIOPosix
@@ -16,10 +17,21 @@ internal enum Entrypoint {
     public static func main() async throws {
         // Detect the current environment configuration
         var env = try Environment.detect()
-        try LoggingSystem.bootstrap(from: &env)
+        try setupTelemetry(environment: &env)
 
         // Create a new application instance with the detected environment
         let app = try await Application.make(env)
+
+        // This attempts to install NIO as the Swift Concurrency global executor.
+        // You can enable it if you'd like to reduce the amount of context switching between NIO and Swift Concurrency.
+        // Note: this has caused issues with some libraries that use `.wait()` and cleanly shutting down.
+        // If enabled, you should be careful about calling async functions before this point as it can cause assertion
+        // failures.
+        // let executorTakeoverSuccess =
+        // NIOSingletons.unsafeTryInstallSingletonPosixEventLoopGroupAsConcurrencyGlobalExecutor()
+        // app.logger.debug("Tried to install SwiftNIO's EventLoopGroup as Swift's global concurrency executor",
+        // metadata:
+        // ["success": .stringConvertible(executorTakeoverSuccess)])
 
         do {
             // Configure the application
@@ -38,4 +50,28 @@ internal enum Entrypoint {
         // Shut down the application after execution
         try await app.asyncShutdown()
     }
+
+    private static func setupTelemetry(environment: inout Environment) throws {
+        let environmentName =
+            Environment.get("ENVIRONMENT")
+            ?? Environment.get("ENVIROMENT")
+            ?? "local"
+        if environmentName == "local" {
+            let consoleLogger = try getConsoleLogger(from: &environment)
+            LoggingSystem.bootstrap { label in
+                MultiplexLogHandler([
+                    consoleLogger
+                ])
+            }
+        } else {
+            try LoggingSystem.bootstrap(from: &environment)
+        }
+
+        _ = try TelemetryExportService.configureGrafanaTempoTracing(serviceName: "fitoverlay-backend")
+    }
+}
+
+internal func getConsoleLogger(from environment: inout Environment) throws -> ConsoleLogger {
+    let level = try Logger.Level.detect(from: &environment)
+    return ConsoleLogger(label: level.rawValue, console: Terminal(), level: level)
 }

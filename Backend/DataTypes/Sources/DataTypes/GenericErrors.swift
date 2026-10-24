@@ -1,5 +1,5 @@
 // GenericErrors.swift
-// Copyright (c) 2026 FitOverlay
+// Copyright (c) 2025 FitOverlay
 // All source code and related assets are the property of FitOverlay.
 // All rights reserved.
 
@@ -12,7 +12,7 @@ public enum GenericErrors: String, Error, Decodable, Encodable {
     case abortError
     /// Error related to Alamofire networking operations
     case alamofireError
-    /// Error when decoding a response fails
+    /// Error when sending a Discord webhook message fails
     case failedToDecodeResponse
     /// Error when response encoding fails
     case failedToEncodeResponse
@@ -32,8 +32,14 @@ public enum GenericErrors: String, Error, Decodable, Encodable {
     case licenseActivationLimitReached
     /// Error when a licence is expired or revoked
     case licenseNotActive
+    /// Error when required image is missing
+    case missingImage
     /// Error for network connectivity issues
     case networkConnectivityError
+    /// Error when S3 path is too short
+    case s3PathTooShort
+    /// Error when SMS message sending fails
+    case smsMessageFailed
     /// Error when API returns neither error nor response
     case unexpectedApiStateNoErrorAndNoResponse
     /// Generic unknown error
@@ -53,18 +59,22 @@ public enum GenericErrors: String, Error, Decodable, Encodable {
             "The verification code you entered is invalid!"
         case .invalidLicenseKey:
             "We couldn't find a licence for this key!"
+        case .licenseActivationLimitReached:
+            "This licence has reached its maximum number of active devices!"
+        case .licenseNotActive:
+            "This licence is no longer active. Please contact support!"
         case .userAlreadyExists:
             "A user with this phone number already exists!"
         case .userNotFound:
             "Sorry, We couldn't find the user for this phone number!"
         case .invalidToken:
-            "Your Authentication Token is Invalid!"
+            "You're Authentication Token is Invalid!"
         case .invalidUserId:
-            "Your UserID isn't a valid UUID. We're Investigating"
-        case .licenseActivationLimitReached:
-            "This licence has reached its maximum number of active devices!"
-        case .licenseNotActive:
-            "This licence is no longer active. Please contact support!"
+            "You're UserID isn't a valid UUID. We're Investigating"
+        case .smsMessageFailed:
+            "We are having some technical difficulties sending sms messages!"
+        case .missingImage:
+            "Image generation was unsuccessful"
         case .failedToDecodeResponse:
             "An Invalid Response Object was sent down to the client!"
         case .failedToEncodeResponse:
@@ -76,9 +86,11 @@ public enum GenericErrors: String, Error, Decodable, Encodable {
         case .networkConnectivityError:
             "Please check your internet connection. It might be offline."
         case .verificationCodeRateLimit:
-            "Please wait before sending another code! You're too fast! 💨"
+            "Please wait before sending another code! You're to fast! 💨"
         case .abortError:
             "The request was aborted!"
+        case .s3PathTooShort:
+            "The S3 Path provided was to short."
         case .invalidUrl:
             "The URL is invalid & Couldn't be parsed!"
         case .invalidPhoneNumber:

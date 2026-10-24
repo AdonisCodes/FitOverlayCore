@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:FitOverlayCore}/Backend",
+            "name": "Debug App (Backend)",
+            "program": "${workspaceFolder:FitOverlayCore}/Backend/.build/debug/App",
+            "preLaunchTask": "swift: Build Debug App (Backend)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:FitOverlayCore}/Backend",
+            "name": "Release App (Backend)",
+            "program": "${workspaceFolder:FitOverlayCore}/Backend/.build/release/App",
+            "preLaunchTask": "swift: Build Release App (Backend)"
+        }
+    ]
+}

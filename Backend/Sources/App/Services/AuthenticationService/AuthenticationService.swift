@@ -1,17 +1,19 @@
 // AuthenticationService.swift
-// Copyright (c) 2026 FitOverlay
+// Copyright (c) 2025 FitOverlay
 // All source code and related assets are the property of FitOverlay.
 // All rights reserved.
 
+import AutomaUtilities
 import DataTypes
 import Fluent
 import JWT
+import Temporal
 import Vapor
 
 internal struct RootAuthenticationService: AuthenticationService {
     private var config: any AuthenticationServiceConfig
     internal let helper: AuthenticationServiceHelper
-    internal let eventService = EventNotificationService()
+    internal let messageService = MessageService()
 
     /// Initializes authentication service
     public init(_ config: RootAuthenticationServiceConfig) {
@@ -22,12 +24,13 @@ internal struct RootAuthenticationService: AuthenticationService {
     /// Register a user
     public func register(
         _ payload: UserRegistrationPayload,
-        codeDelivery: any AuthCodeDeliveryService
+        temporalClient: TemporalClient
     ) async throws -> AuthenticationTokensPayloadDTO {
-        let registrator = UserRegistrationService(.init(
+        var registrator = UserRegistrationService(.init(
             writeDb: config.writeDb,
             readDb: config.readDb,
             logger: config.logger,
+            temporalClient: temporalClient,
             payload: payload
         ))
         return try await registrator.register()
@@ -45,10 +48,9 @@ internal struct RootAuthenticationService: AuthenticationService {
     }
 
     /// Send authentication code
-    public func sendAuthCode(
-        phoneNumber: String,
-        codeDelivery: any AuthCodeDeliveryService
-    ) async throws -> AuthenticationCodeResponseDTO {
+    public func sendAuthCode(phoneNumber: String,
+                             temporalClient: TemporalClient) async throws -> AuthenticationCodeResponseDTO
+    {
         let code = RandomService.randomCode()
         logAuthCodeAttempt(phoneNumber: phoneNumber, code: code)
 
@@ -62,7 +64,7 @@ internal struct RootAuthenticationService: AuthenticationService {
             phoneNumber: phoneNumber,
             code: code,
             codeModelId: codeModelId,
-            codeDelivery: codeDelivery
+            temporalClient: temporalClient
         )
     }
 
@@ -100,7 +102,7 @@ internal struct RootAuthenticationService: AuthenticationService {
         _ = try await (deleteRefresh, deleteAccess)
     }
 
-    /// Checks if a user exists based on phone number
+    /// CHecks if a user exists based on phone number
     public func doesUserExist(phoneNumber: String) async throws -> Bool {
         do {
             let exists = try await checkUserExists(phoneNumber: phoneNumber)
@@ -147,7 +149,7 @@ internal struct RootAuthenticationService: AuthenticationService {
         phoneNumber: String,
         code: String,
         codeModelId: UUID,
-        codeDelivery: any AuthCodeDeliveryService
+        temporalClient: TemporalClient,
     ) async throws -> AuthenticationCodeResponseDTO {
         do {
             return try await helper.sendAuthCode(
@@ -156,7 +158,7 @@ internal struct RootAuthenticationService: AuthenticationService {
                     phoneNumber: phoneNumber,
                     codeModelId: codeModelId
                 ),
-                codeDelivery: codeDelivery
+                temporalClient: temporalClient
             )
         } catch let error as GenericErrors {
             await helper.sendTelemetryDataOnAuthCodeSendFail(
@@ -178,7 +180,7 @@ internal struct RootAuthenticationService: AuthenticationService {
     }
 
     private func sendRefreshEvent(userId: String) throws {
-        try eventService.sendAppEvent(
+        try messageService.sendDiscordWebhookAppEvent(
             input: userId,
             event: "is refreshing their access token",
             logger: config.logger
@@ -196,7 +198,7 @@ internal struct RootAuthenticationService: AuthenticationService {
     }
 
     private func sendLogoutEvent(userId: UUID) throws {
-        try eventService.sendAppEvent(
+        try messageService.sendDiscordWebhookAppEvent(
             input: userId.uuidString,
             event: "is logging out",
             logger: config.logger
@@ -207,7 +209,7 @@ internal struct RootAuthenticationService: AuthenticationService {
         config.logger.info(
             "Logging user out",
             metadata: [
-                "to": .string("AuthenticationService.logout"),
+                "to": .string("AuthenticationService.refreshToken"),
                 "userId": .string(userId.uuidString),
             ]
         )
@@ -235,8 +237,8 @@ internal struct RootAuthenticationService: AuthenticationService {
 internal protocol AuthenticationService {
     /// Helper
     var helper: AuthenticationServiceHelper { get }
-    /// Event notification service
-    var eventService: EventNotificationService { get }
+    /// Message Service
+    var messageService: MessageService { get }
 }
 
 internal protocol AuthenticationServiceConfig {

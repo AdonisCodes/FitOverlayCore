@@ -1,16 +1,18 @@
 /// AuthenticationServiceHelper.swift
-/// Copyright (c) 2026 FitOverlay
+/// Copyright (c) 2025 FitOverlay
 /// All source code and related assets are the property of FitOverlay.
 /// All rights reserved.
 
+import AutomaUtilities
 import DataTypes
 import Fluent
 import JWT
+import Temporal
 import Vapor
 
 internal actor AuthenticationServiceHelper {
     private let config: AuthenticationServiceHelperConfig
-    private let eventService = EventNotificationService()
+    private let messageService = MessageService()
 
     /// Authentication Service Helpers
     public init(_ config: AuthenticationServiceHelperConfig) {
@@ -68,15 +70,14 @@ internal actor AuthenticationServiceHelper {
     }
 
     /// Sends a verification code to the given phone number and returns the result.
-    public func sendAuthCode(
-        _ payload: SendAuthCodePayload,
-        codeDelivery: any AuthCodeDeliveryService
-    ) async throws -> AuthenticationCodeResponseDTO {
+    public func sendAuthCode(_ payload: SendAuthCodePayload,
+                             temporalClient: TemporalClient) async throws -> AuthenticationCodeResponseDTO
+    {
         try await AuthCodeSender(.init(
             writeDb: config.writeDb,
             readDb: config.writeDb,
             logger: config.logger,
-            codeDelivery: codeDelivery,
+            temporalClient: temporalClient,
             payload: payload
         )).send()
     }
@@ -90,7 +91,7 @@ internal actor AuthenticationServiceHelper {
     ) {
         BackendMetric.totalFailedVerificationCodesSent.increment()
         config.logger.error(
-            "Couldn't send verification code to user",
+            "Couldn't sent verification code to user",
             metadata: [
                 "to": .string("\(String(describing: Self.self)).\(#function)"),
                 "phoneNumber": .string(phoneNumber),
@@ -137,7 +138,7 @@ internal struct AuthenticationServiceHelperConfig: AuthenticationServiceConfig {
 
 internal struct AuthenticationCodeValidator {
     private let config: AuthenticationCodeValidatorConfig
-    private let eventService = EventNotificationService()
+    private let messageService = MessageService()
 
     /// Initializes Authentication Code Validation
     public init(_ config: AuthenticationCodeValidatorConfig) {
@@ -151,7 +152,7 @@ internal struct AuthenticationCodeValidator {
     }
 
     private func sendTelemetryDataOnValidateAndDeleteCodeAttempt() throws {
-        try eventService.sendAppEvent(
+        try messageService.sendDiscordWebhookAppEvent(
             input: config.payload.phoneNumber,
             event: "submitted authentication code to validate `\(config.payload.code)`",
             logger: config.logger
@@ -292,7 +293,7 @@ internal struct AccessTokenResetterConfig: AuthenticationServiceConfig {
     public let readDb: Database
     /// Logger
     public let logger: Logger
-    /// Payload submitted to auth token reset service
+    /// Payload submitted to auth token reset sevice
     public let payload: ResetAccessCodePayload
 }
 
@@ -395,14 +396,14 @@ internal struct OldAccessTokenDeleterConfig: AuthenticationServiceConfig {
     public let readDb: Database
     /// Logger
     public let logger: Logger
-    /// Payload to submit to old access deletion service
+    /// Paylaod to submit to old access deletion service
     public let payload: DeleteOldAccessTokensPayload
 }
 
 internal struct DeleteOldAccessTokensPayload {
     /// User id for which to delete tokens for
     public let userId: UUID
-    /// Subject
+    /// Subjecth
     public let subject: JWTTokenSubject
     /// ASC on date how many tokens to skip
     public let totalNewestTokensToSkip: Int?
@@ -421,7 +422,7 @@ internal struct DeleteOldAccessTokensPayload {
 
 internal struct AuthenticationTokensPayloadCreator {
     private let config: AuthenticationTokensPayloadCreatorConfig
-    private let eventService = EventNotificationService()
+    private let messageService = MessageService()
 
     /// Initializes token
     public init(_ config: AuthenticationTokensPayloadCreatorConfig) {
@@ -444,7 +445,7 @@ internal struct AuthenticationTokensPayloadCreator {
     }
 
     private func alertCreateSuccess(payload tokensPayload: AuthenticationTokensPayloadDTO) throws {
-        try eventService.sendAppEvent(
+        try messageService.sendDiscordWebhookAppEvent(
             input: config.payload.userId.uuidString,
             event: """
             generated tokens:
@@ -536,7 +537,7 @@ internal struct AuthCodeSender {
 
     /// Sends authentication token
     public func send() async throws -> AuthenticationCodeResponseDTO {
-        try await deliverCode()
+        try await startSendCodeJob()
         try await createAuthCodeModel()
         sendTelemetryDataOnSendSuccess()
         return sendSuccess()
@@ -569,18 +570,32 @@ internal struct AuthCodeSender {
         ).save(on: config.writeDb)
     }
 
-    private func deliverCode() async throws {
+    private func startSendCodeJob() async throws {
         do {
-            try await config.codeDelivery.send(
-                code: config.payload.code,
-                toPhoneNumber: config.payload.phoneNumber
+            _ = try await config.temporalClient.startWorkflow(
+                type: SendTransactionalMessageWorkflow.self,
+                options: .init(
+                    id: "send-transactional-message-\(config.payload.codeModelId)",
+                    taskQueue: "default-queue"
+                ),
+                input: .init(
+                    content: MessageFormatterService
+                        .craftVerificationCodeMessage(
+                            code: config.payload.code
+                        ),
+                    toPhoneNumber: config.payload.phoneNumber
+                )
             )
         } catch {
-            config.logger.error(
-                "Error occurred while delivering authentication code",
+            // Capture the current stack trace
+            let stackTrace = Thread.callStackSymbols.joined(separator: "\n")
+
+            config.logger.info(
+                "Error occurred while starting workflow to send authentication code",
                 metadata: [
                     "to": .string("\(String(describing: Self.self)).\(#function)"),
                     "error": .string(error.localizedDescription),
+                    "stackTrace": .string(stackTrace),
                 ]
             )
 
@@ -600,8 +615,8 @@ internal struct AuthCodeSenderConfig: AuthenticationServiceConfig {
     public let readDb: Database
     /// Logger
     public let logger: Logger
-    /// Delivery service used to send the code to the user
-    public let codeDelivery: any AuthCodeDeliveryService
+    // Temporal client to execute workflows
+    public let temporalClient: TemporalClient
     /// Payload to submit
     public let payload: SendAuthCodePayload
 }

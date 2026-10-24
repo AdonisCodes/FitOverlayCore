@@ -5,7 +5,7 @@
 The `ProgressIndicatorComponent` is used to represent any form of loading or progression. This component centralizes the logic for this and easily allows for extensibility / wrapping to create custom implementations of the component logic!
 
 ## Design
-LINK: [FIGMA](https://www.figma.com/design/x5MkR0UFRMUkp0eiAXVbmy/FitOverlayUIKit)
+LINK: [FIGMA](https://www.figma.com/design/x5MkR0UFRMUkp0eiAXVbmy/FitOverlayUIKit?node-id=635-22)
 
 ## Usage
 <!-- Explain how to use the component here -->

@@ -1,8 +1,9 @@
 // RequestIsAuthenticatedMiddleware.swift
-// Copyright (c) 2026 FitOverlay
+// Copyright (c) 2025 FitOverlay
 // All source code and related assets are the property of FitOverlay.
 // All rights reserved.
 
+import AutomaUtilities
 import DataTypes
 import Vapor
 
@@ -17,7 +18,7 @@ internal struct RequestIsAuthenticatedMiddleware: AsyncMiddleware {
     public func respond(to request: Request, chainingTo next: AsyncResponder) async throws -> Response {
         // Verify the JWT token from the request
         let tokenPayload = try await request.jwt.verify(as: JWTTokenPayload.self)
-        let eventService = EventNotificationService()
+        let messageService = MessageService()
 
         do {
             // Find the token in the database
@@ -57,7 +58,7 @@ internal struct RequestIsAuthenticatedMiddleware: AsyncMiddleware {
                 ]
             )
 
-            try eventService.sendAlert(
+            try messageService.sendDiscordAlert(
                 alertTitle: "Error in Authentication Middleware",
                 error: error,
                 logger: request.logger

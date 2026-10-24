@@ -3,7 +3,7 @@
 import PackageDescription
 
 /// FitOverlayAppShared Package Definition
-/// This package contains shared components and utilities for the FitOverlay macOS and iOS applications.
+/// This package contains shared components and utilities for the FitOverlay iOS and macOS applications.
 ///
 /// The package includes:
 /// - Network communication utilities using Alamofire

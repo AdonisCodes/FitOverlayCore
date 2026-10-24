@@ -1,17 +1,19 @@
 // UserRegistrationService.swift
-// Copyright (c) 2026 FitOverlay
+// Copyright (c) 2025 FitOverlay
 // All source code and related assets are the property of FitOverlay.
 // All rights reserved.
 
+import AutomaUtilities
 import DataTypes
 import Fluent
 import JWT
+import Temporal
 import Vapor
 
 internal struct UserRegistrationService: AuthenticationService {
     private var config: UserRegistrationConfig
     internal let helper: AuthenticationServiceHelper
-    internal let eventService = EventNotificationService()
+    internal let messageService = MessageService()
     private let identifier: UserIdentifier
     private var user: UserModel
 
@@ -23,11 +25,11 @@ internal struct UserRegistrationService: AuthenticationService {
         user = Self.createUserModel(identifier: identifier, config: config)
     }
 
-    /// Registers User
-    public func register() async throws -> AuthenticationTokensPayloadDTO {
+    /// Registers User & Creates Profile Photo
+    public mutating func register() async throws -> AuthenticationTokensPayloadDTO {
         try await helper.validateAndDeleteCode(config.payload.authCodePayload)
 
-        try await user.save(on: config.writeDb)
+        try await generateUserProfilePicture(&user)
         try sendTelemetryDataOnRegistrationSuccess()
 
         return try await helper.createAuthenticationTokensPayload(.init(
@@ -47,8 +49,8 @@ internal struct UserRegistrationService: AuthenticationService {
             ]
         )
 
-        try eventService
-            .sendAppEvent(
+        try messageService
+            .sendDiscordWebhookAppEvent(
                 input: "\(config.payload.authCodePayload.phoneNumber) - \(identifier.id)",
                 event: "created an account with \(identifier.name)",
                 logger: config.logger
@@ -62,6 +64,25 @@ internal struct UserRegistrationService: AuthenticationService {
             phoneNumber: config.payload.authCodePayload.phoneNumber,
             accepted: false
         )
+    }
+
+    private func generateUserProfilePicture(_ user: inout UserModel) async throws {
+        let userDTO = try user.toDTO(logger: config.logger)
+        let profilePictureKey = try ProfilePictureService(logger: config.logger).generateImageKey(for: userDTO)
+
+        let temporalClient = config.temporalClient
+        _ = try await temporalClient.startWorkflow(
+            type: CreateProfilePictureWorkflow.self,
+            options: .init(
+                id: "create-user-profile-pic-\(userDTO.id?.uuidString ?? userDTO.username)-\(Date())",
+                taskQueue: "default-queue"
+            ),
+            input: .init(payload: userDTO)
+        )
+
+        user.profilePictureKey = profilePictureKey
+
+        try await user.save(on: config.writeDb)
     }
 
     private static func generateNewUserIdentifier() -> UserIdentifier {
@@ -86,6 +107,8 @@ internal struct UserRegistrationConfig: AuthenticationServiceConfig {
     public let readDb: Database
     /// Logger
     public let logger: Logger
+    // Temporal client to execute workflows
+    public let temporalClient: TemporalClient
     /// Payload to register user
     public let payload: UserRegistrationPayload
 }

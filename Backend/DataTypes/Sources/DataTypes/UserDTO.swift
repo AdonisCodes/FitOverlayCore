@@ -1,5 +1,5 @@
 // UserDTO.swift
-// Copyright (c) 2026 FitOverlay
+// Copyright (c) 2025 FitOverlay
 // All source code and related assets are the property of FitOverlay.
 // All rights reserved.
 
@@ -26,6 +26,15 @@ public struct UserDTO: Content {
     /// The user's phone number for contact and verification purposes.
     public var phoneNumber: String
 
+    /// The user's Instagram handle, if provided.
+    public var instagramHandle: String?
+
+    /// The storage key for the user's profile picture.
+    public var profilePictureKey: String?
+
+    /// The URL where the user's profile picture can be accessed.
+    public var profilePictureUrl: String?
+
     /// Indicates whether the user has been accepted into the system.
     public var accepted: Bool
 
@@ -37,6 +46,9 @@ public struct UserDTO: Content {
     ///   - deletedAt: The timestamp when the user record was soft deleted
     ///   - username: The user's chosen username
     ///   - phoneNumber: The user's phone number
+    ///   - instagramHandle: The user's Instagram handle (optional)
+    ///   - profilePictureKey: The storage key for the user's profile picture (optional)
+    ///   - profilePictureUrl: The URL for accessing the user's profile picture (optional)
     ///   - accepted: Whether the user has been accepted into the system
     public init(
         id: UUID? = nil,
@@ -45,14 +57,21 @@ public struct UserDTO: Content {
         deletedAt: Date? = nil,
         username: String,
         phoneNumber: String,
+        instagramHandle: String? = nil,
+        profilePictureKey: String? = nil,
+        profilePictureUrl: String? = nil,
         accepted: Bool
     ) {
+        // Assign all provided values to their corresponding properties
         self.id = id
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
         self.username = username
         self.phoneNumber = phoneNumber
+        self.instagramHandle = instagramHandle
+        self.profilePictureKey = profilePictureKey
+        self.profilePictureUrl = profilePictureUrl
         self.accepted = accepted
     }
 }
