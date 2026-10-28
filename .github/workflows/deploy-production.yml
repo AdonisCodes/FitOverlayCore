@@ -1,0 +1,41 @@
+name: Fly Deploy To Prod
+
+on:
+  push:
+    branches:
+      - release/production
+
+jobs:
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-24.04
+    concurrency: deploy-group-production
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - uses: SwiftyLab/setup-swift@latest
+        with:
+          swift-version: "6.2"
+
+      - name: Get Cache
+        uses: actions/cache@v4
+        id: backend-build
+        with:
+          key: deploy-cache-${{ hashFiles('Backend/Package.resolved') }}
+          path: Backend/.build
+
+      - name: Get CLI Cache
+        uses: actions/cache@v4
+        id: cli-build
+        with:
+          key: deploy-cache-${{ hashFiles('CLI/Package.resolved') }}
+          path: CLI/.build
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: |
+          npm run deploy:backend:production
+          npm run deploy:worker:production
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_PROD_API_KEY }}
+      FLY_METRICS_TOKEN: ${{ secrets.FLY_METRICS_TOKEN }}

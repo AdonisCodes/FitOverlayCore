@@ -1,0 +1,9 @@
+- [ ] HTTP tracing
+  - [ ] Enable Tracing All Routes
+  - [ ] Add OTLP Tracer & Exporter To configure.swift via automautils
+  - [ ] Add the ENV vars to export to our grafana organization
+  - [ ] Test The Implementation
+- [ ] TRACE ALL OUR INFRA
+  - [ ] REDIS, PG, OTHER DBS
+- [ ] TRACE MACHINES, MEMORY, CPU FLY.IO
+- [ ] TRACECS SHOULD AUTOMATICALLY BE LINKED TO FLY MACHINES SIMILAR TO LOGS

@@ -1,0 +1,22 @@
+FROM swift:6.2.3-jammy AS build
+
+RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
+    && apt-get -q update \
+    && apt-get -q dist-upgrade -y \
+    && apt-get install -y curl libsnappy-dev pkg-config openssl libssl-dev \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && apt-get remove --purge -y curl
+
+RUN npm install -g nodemon && apt-get remove npm -y
+
+WORKDIR /app
+
+EXPOSE 8080 $METRICS_PORT
+
+RUN --mount=type=secret,id=GITHUB_SSH_AUTHENTICATION_TOKEN \
+    [ -f /run/secrets/GITHUB_SSH_AUTHENTICATION_TOKEN ] && \
+    TOKEN=$(cat /run/secrets/GITHUB_SSH_AUTHENTICATION_TOKEN) && \
+    git config --global url."https://x-access-token:${TOKEN}@github.com/".insteadOf "https://github.com/" || true
+
+CMD bash -c "nodemon -w ./ -w .env -e '.' --ignore ./.build --exec 'swift run App --env local $RUN_COMMAND'"

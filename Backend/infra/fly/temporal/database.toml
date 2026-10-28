@@ -1,0 +1,5 @@
+app = 'fitoverlay-backend-temporal-postgres-sandbox-__FLY_ENVIRONMENT__'
+primary_region = 'jnb'
+
+[build]
+-

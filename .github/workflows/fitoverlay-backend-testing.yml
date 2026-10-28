@@ -1,0 +1,87 @@
+name: Run `FitOverlayBackend` Tests
+
+on:
+  pull_request:
+    paths:
+      - "Backend/**/*.swift"
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: SwiftyLab/setup-swift@latest
+        with:
+          swift-version: "6.2"
+
+      - uses: actions/cache@v4
+        with:
+          path: Backend/.build
+          key: ${{ runner.os }}-backend-unittests-${{ hashFiles('**/Package.resolved') }}
+
+      - name: Run Unit Tests
+        uses: GetAutomaApp/opensource-actions/swifttesting@main
+        with:
+          compose: "false"
+          working-directory: "Backend"
+          swift_test_extra_args: "--filter '.*UnitTests.*'"
+          gh_pat: ${{ secrets.GET_FITOVERLAY_UTILITIES_GH_PAT }}
+
+  integration-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: SwiftyLab/setup-swift@latest
+        with:
+          swift-version: "6.2"
+
+      - uses: actions/cache@v4
+        with:
+          path: Backend/.build
+          key: ${{ runner.os }}-backend-integrationtests-${{ hashFiles('**/Package.resolved') }}
+      - name: Run Integration Tests
+        uses: GetAutomaApp/opensource-actions/swifttesting@main
+        with:
+          compose: "true"
+          working-directory: "Backend"
+          swift_test_extra_args: "--filter '.*IntegrationTests.*'"
+          required_healthy_services_docker_compose: '["postgres", "localstack"]'
+          compose_services_to_startup: '["postgres", "localstack"]'
+          gh_pat: ${{ secrets.GET_FITOVERLAY_UTILITIES_GH_PAT }}
+    env:
+      OWNER: ${{ secrets.OWNER }}
+      REPO: ${{ secrets.REPO }}
+      PRIMARY_POSTGRES_URL: ${{ secrets.PRIMARY_POSTGRES_URL }}
+      REGIONAL_POSTGRES_URL: ${{ secrets.REGIONAL_POSTGRES_URL }}
+      ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+      JWT_ENCRYPTION_SECRET: ${{ secrets.JWT_ENCRYPTION_SECRET }}
+      DISCORD_APP_EVENTS_URL: ${{ secrets.DISCORD_APP_EVENTS_URL }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      TIGRIS_ACCESS_KEY_ID: ${{ secrets.TIGRIS_ACCESS_KEY_ID }}
+      TIGRIS_ACCESS_KEY_SECRET: ${{ secrets.TIGRIS_ACCESS_KEY_SECRET }}
+      TIGRIS_MEDIA_BUCKET_NAME: ${{ secrets.TIGRIS_MEDIA_BUCKET_NAME }}
+      TIGRIS_BASE_URL: ${{ secrets.TIGRIS_BASE_URL }}
+      LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      TWITTER_API_APP_KEY: ${{ secrets.TWITTER_API_APP_KEY }}
+      TWITTER_API_APP_SECRET_KEY: ${{ secrets.TWITTER_API_APP_SECRET_KEY }}
+      TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+      TWITTER_SECRET_TOKEN: ${{ secrets.TWITTER_SECRET_TOKEN }}
+      TEST_TWITTER_OAUTH_TOKEN_ID: ${{ secrets.TEST_TWITTER_OAUTH_TOKEN_ID }}
+      TEST_TWITTER_USER_TOKEN_ID: ${{ secrets.TEST_TWITTER_USER_TOKEN_ID }}
+      SEED_TWITTER_OAUTH_TOKEN: ${{ secrets.SEED_TWITTER_OAUTH_TOKEN }}
+      SEED_TWITTER_OAUTH_TOKEN_SECRET: ${{ secrets.SEED_TWITTER_OAUTH_TOKEN_SECRET }}
+      SEED_TWITTER_USER_ACCESS_TOKEN: ${{ secrets.SEED_TWITTER_USER_ACCESS_TOKEN }}
+      SEED_TWITTER_USER_ACCESS_TOKEN_SECRET: ${{ secrets.SEED_TWITTER_USER_ACCESS_TOKEN_SECRET }}
+      SEED_TWITTER_USER_ACCESS_TOKEN_VERIFIER: ${{ secrets.SEED_TWITTER_USER_ACCESS_TOKEN_VERIFIER }}
+      TEST_CONTROLLERS_KEY: ${{ secrets.TEST_CONTROLLERS_KEY }}
+      BACKEND_URL: ${{ secrets.BACKEND_URL }}
+      PROMETHEUS_PORT: ${{ secrets.PROMETHEUS_PORT }}
+      PROMETHEUS_BASE_URL: ${{ secrets.PROMETHEUS_BASE_URL }}
+      FLY_METRICS_TOKEN: ${{ secrets.FLY_METRICS_TOKEN }}
+      AUTHENTICATION_CODE_RATE_LIMIT: ${{ secrets.AUTHENTICATION_CODE_RATE_LIMIT }}
+      FITOVERLAY_WEB_CORE_API_BASE_URL: ${{ secrets.FITOVERLAY_WEB_CORE_API_BASE_URL }}

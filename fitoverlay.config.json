@@ -1,0 +1,24 @@
+{
+  "fly" : {
+   "config_files_root" : "Backend/infra/fly",
+   "deploy_secrets": {
+      "fitoverlay-backend-production": ["env.production"],
+      "fitoverlay-backend-sandbox": ["env.sandbox"],
+      "fitoverlay-backend-staging": ["env.staging"],
+      "fitoverlay-backend-temporal-production": ["env.production"],
+      "fitoverlay-backend-temporal-sandbox": ["env.sandbox"],
+      "fitoverlay-backend-temporal-worker-production": ["env.production"],
+      "fitoverlay-backend-temporal-worker-sandbox": ["env.sandbox"]
+    }
+  },
+  "actionsSecrets" : {
+    "owner_repo" : "FitOverlay/FitOverlayCore"
+  },
+  "grafana" : {
+    "current_environment" : "fitoverlay-grafana"
+  },
+  "obsidian": {
+    "vault_name": "FitOverlay"
+  }
+
+}

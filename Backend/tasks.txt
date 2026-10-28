@@ -1,0 +1,26 @@
+X Refactor stuff to use foreign key relationships
+X Make enums usable
+X Message Service
+    X Discord Webhook Stuff (Messages on events)
+X Logging (Full Codebase)
+X Random Service
+X User profile pics + default
+X OptionalField <- Figure out this Fluent property / field type
+X Logging Again
+X Mobile Interactor
+X Logging Again
+X Mobile Interactor
+X Fix insecure .env secets + get them into the right environments
+X Deploy to staging + prod envs
+- PR to write tests for everything + properly create test templates to cover every single loc
+- PR to go over error handeling + stack tracing
+- PR to go over alerting + metrics (probably datadog or some other solutoin)
+- .generateImage should take a param to prevent text from appearing
+    - keep regenerating for x amount of times (default 3) to prevent text
+- Investicate Vapor Jobs / Crons + Templates
+- SMS logic to Vapor Job
+- Testing Suite
+- Deploy to staging + prod envs
+X Fix insecure .env secets + get them into the right environments
+- PR To implement Mobile UI for Account Creation (Application Next)
+- Plan Feature Enablements
