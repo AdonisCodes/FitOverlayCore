@@ -67,7 +67,6 @@ internal struct AppConfigurator {
     private func registerControllers() throws {
         try app.register(collection: AuthenticationController())
         try app.register(collection: AppLaunchController())
-        try app.register(collection: TwitterController())
         try app.register(collection: ChatCompletionController())
         try app.register(collection: LicenseController())
     }
@@ -145,8 +144,6 @@ internal struct DatabaseConfigurator {
         app.migrations.add(UserProfileConvertIdToImageKeyMigration1735294202())
         app.migrations.add(RemoveUserStorageMigration1739456565())
         app.migrations.add(AddAcceptedColumnMigration1740658649())
-        app.migrations.add(TwitterOAuthTokenMigration1741687313())
-        app.migrations.add(TwitterUserTokenMigration1741708919())
         app.migrations.add(LicenseMigration1792627203())
         app.migrations.add(DeviceActivationMigration1792627204())
     }
@@ -165,64 +162,6 @@ public struct DatabaseSeeder {
                 "to": .string("\(String(describing: Self.self)).\(#function)")
             ]
         )
-        try await seedTwitterTokens()
-    }
-
-    /// Seed a single `TwitterUserToken` `TwitterOAuthToken` so that the post tweet tests have tokens of an account to
-    /// post to.
-    private func seedTwitterTokens() async throws {
-        let envTokenId = try Environment.getOrThrow("TEST_TWITTER_OAUTH_TOKEN_ID")
-        let oauthTokenID = try UUID.unwrapFromString(envTokenId) {
-            app.logger.error(
-                "Could not convert seed oauth token ID to UUID, this should never happen.",
-                metadata: [
-                    "to": .string("seedDatabase"),
-                    "token": .string(envTokenId),
-                ]
-            )
-        }
-
-        try await createTwitterOAuthTokenIfNotExist(id: oauthTokenID)
-
-        let envUserTokenId = try Environment.getOrThrow("TEST_TWITTER_USER_TOKEN_ID")
-        let userTokenID = try UUID.unwrapFromString(envUserTokenId) {
-            app.logger.error(
-                "Could not convert seed user token ID to UUID, this should never happen.",
-                metadata: [
-                    "to": .string("seedDatabase"),
-                    "token": .string(envUserTokenId),
-                ]
-            )
-        }
-
-        try await createUserTokenIfNotExist(id: userTokenID, oauthTokenID: oauthTokenID)
-    }
-
-    private func createTwitterOAuthTokenIfNotExist(id: UUID) async throws {
-        if try await TwitterOAuthToken.doesExist(id: id, on: app.db) {
-            return
-        }
-
-        try await TwitterOAuthToken(
-            id: id,
-            oauthToken: Environment.getOrThrow("SEED_TWITTER_OAUTH_TOKEN"),
-            oauthTokenSecret: Environment.getOrThrow("SEED_TWITTER_OAUTH_TOKEN_SECRET"),
-            oauthCallbackConfirmed: true
-        )
-        .create(on: app.db)
-    }
-
-    private func createUserTokenIfNotExist(id: UUID, oauthTokenID: UUID) async throws {
-        if try await TwitterUserToken.doesExist(id: id, on: app.db) {
-            return
-        }
-        try await TwitterUserToken(
-            id: id,
-            accessToken: Environment.getOrThrow("SEED_TWITTER_USER_ACCESS_TOKEN"),
-            secretAccessToken: Environment.getOrThrow("SEED_TWITTER_USER_ACCESS_TOKEN_SECRET"),
-            oauthVerifier: Environment.getOrThrow("SEED_TWITTER_USER_ACCESS_TOKEN_VERIFIER"),
-            oauthTokenID: oauthTokenID
-        ).create(on: app.db)
     }
 }
 

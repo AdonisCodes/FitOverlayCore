@@ -12,7 +12,7 @@
     }
   },
   "actionsSecrets" : {
-    "owner_repo" : "FitOverlay/FitOverlayCore"
+    "owner_repo" : "AdonisCodes/FitOverlayCore"
   },
   "grafana" : {
     "current_environment" : "fitoverlay-grafana"

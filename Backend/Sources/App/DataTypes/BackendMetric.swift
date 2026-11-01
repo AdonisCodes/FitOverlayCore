@@ -108,48 +108,6 @@ internal enum BackendMetric {
         )
     }
 
-    /// Creates a counter to track Twitter OAuth request metrics.
-    /// - Parameter status: The status of the OAuth request (success/fail/etc).
-    /// - Returns: A Prometheus counter for Twitter OAuth requests with the given status.
-    public static func twitterOAuthRequest(
-        status: MetricStatus
-    ) -> Prometheus.Counter {
-        MetricsService.global.makeCounter(
-            name: "twitter_oauth_requests",
-            labels: [
-                "status": status.rawValue,
-            ]
-        )
-    }
-
-    /// Creates a counter to track Twitter user token conversion metrics.
-    /// - Parameter status: The status of the token conversion (success/fail/etc).
-    /// - Returns: A Prometheus counter for Twitter token conversions with the given status.
-    public static func twitterUserTokensConverted(
-        status: MetricStatus
-    ) -> Prometheus.Counter {
-        MetricsService.global.makeCounter(
-            name: "twitter_user_tokens_converted",
-            labels: [
-                "status": status.rawValue,
-            ]
-        )
-    }
-
-    /// Creates a counter to track Twitter post tweet metrics.
-    /// - Parameter status: The status of posting the tweet (success/fail/etc).
-    /// - Returns: A Prometheus counter for tweet posts with the given status.
-    public static func twitterPostTweet(
-        status: MetricStatus
-    ) -> Prometheus.Counter {
-        MetricsService.global.makeCounter(
-            name: "twitter_post_tweet",
-            labels: [
-                "status": status.rawValue,
-            ]
-        )
-    }
-
     /// Creates a counter to track RSS feed reader metrics.
     /// - Parameters:
     ///   - status: The status of the RSS feed read.
