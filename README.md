@@ -27,7 +27,7 @@ The server-side component built with Vapor 4, providing:
 - Profile generation pipeline (OpenAI image generation → Tigris storage) and transactional
   messaging (SNS), executed through Temporal workflows and a dedicated worker command
 - Licence keys, cross-platform device activations, and purchase webhook stubs (Stripe / App Store)
-- Integration with external services (Twitter, OpenAI, RSS feeds, web scraping, Textract)
+- Integration with external services (OpenAI, RSS feeds, web scraping, Textract)
 - Metrics and monitoring (Prometheus, Loki, Grafana, Tempo)
 
 ### FitOverlayKit (`/FitOverlayKit`)
@@ -74,7 +74,6 @@ Shared data models and type definitions used across the application.
   - Vapor ecosystem (Fluent, Leaf, JWT)
   - Alamofire for networking
   - OpenAI SDK
-  - TwitterAPIKit
   - SwiftSoup for HTML parsing
   - swift-temporal-sdk for workflows
 
