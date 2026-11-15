@@ -10,7 +10,6 @@ import SwiftUI
 ///
 /// This struct manages the initial app launch sequence including:
 /// - Authentication token management
-/// - User acceptance status verification
 /// - Client configuration retrieval
 public struct AppLaunch: Sendable {
     /// The base URL for API requests
@@ -64,20 +63,6 @@ public struct AppLaunch: Sendable {
             }
         }
         return false
-    }
-
-    /// Checks if the current user has accepted the terms of service
-    ///
-    /// - Returns: A boolean indicating if the user has accepted the terms
-    /// - Note: Returns false if there is an error checking the acceptance status
-    public func isUserAccepted() async -> Bool {
-        let appLaunchInteractor = AppLaunchControllerInteractor(baseURL: baseURL)
-        do {
-            return try await appLaunchInteractor.makeIsUserAcceptedRequest()
-        } catch {
-            print("Unknown Response Error, Returning False")
-            return false
-        }
     }
 
     /// Retrieves the client configuration from the server

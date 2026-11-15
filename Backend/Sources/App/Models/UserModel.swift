@@ -43,10 +43,6 @@ public final class UserModel: Model, @unchecked Sendable {
     @Timestamp(key: "deleted_at", on: .delete)
     public var deletedAt: Date?
 
-    /// Indicates if the users application was accepted
-    @Field(key: "accepted")
-    public var accepted: Bool
-
     /// Initializes a new instance of `UserModel`.
     public init() {}
 
@@ -60,7 +56,6 @@ public final class UserModel: Model, @unchecked Sendable {
     ///   - createdAt: Timestamp when the user was created.
     ///   - updatedAt: Timestamp when the user was last updated.
     ///   - deletedAt: Timestamp when the user was deleted.
-    ///   - accepted: Indicates if the user is accepted into FitOverlay. Defaults to false
     public init(
         id: UUID? = nil,
         username: String,
@@ -69,8 +64,7 @@ public final class UserModel: Model, @unchecked Sendable {
         profilePictureKey: String? = nil,
         createdAt: Date? = nil,
         updatedAt: Date? = nil,
-        deletedAt: Date? = nil,
-        accepted: Bool = false
+        deletedAt: Date? = nil
     ) {
         self.id = id
         self.username = username
@@ -80,7 +74,6 @@ public final class UserModel: Model, @unchecked Sendable {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
-        self.accepted = accepted
     }
 
     /// Converts the model to a `UserDTO`.
@@ -101,8 +94,7 @@ public final class UserModel: Model, @unchecked Sendable {
             phoneNumber: phoneNumber,
             instagramHandle: instagramHandle,
             profilePictureKey: profilePictureKey,
-            profilePictureUrl: profilePictureUrl,
-            accepted: accepted
+            profilePictureUrl: profilePictureUrl
         )
     }
 
@@ -115,8 +107,7 @@ public final class UserModel: Model, @unchecked Sendable {
             username: dto.username,
             phoneNumber: dto.phoneNumber,
             instagramHandle: dto.instagramHandle,
-            profilePictureKey: dto.profilePictureKey,
-            accepted: dto.accepted
+            profilePictureKey: dto.profilePictureKey
         )
     }
 

@@ -35,9 +35,6 @@ public struct UserDTO: Content {
     /// The URL where the user's profile picture can be accessed.
     public var profilePictureUrl: String?
 
-    /// Indicates whether the user has been accepted into the system.
-    public var accepted: Bool
-
     /// Initializes a new UserDTO instance.
     /// - Parameters:
     ///   - id: The unique identifier for the user
@@ -49,7 +46,6 @@ public struct UserDTO: Content {
     ///   - instagramHandle: The user's Instagram handle (optional)
     ///   - profilePictureKey: The storage key for the user's profile picture (optional)
     ///   - profilePictureUrl: The URL for accessing the user's profile picture (optional)
-    ///   - accepted: Whether the user has been accepted into the system
     public init(
         id: UUID? = nil,
         createdAt: Date? = nil,
@@ -59,8 +55,7 @@ public struct UserDTO: Content {
         phoneNumber: String,
         instagramHandle: String? = nil,
         profilePictureKey: String? = nil,
-        profilePictureUrl: String? = nil,
-        accepted: Bool
+        profilePictureUrl: String? = nil
     ) {
         // Assign all provided values to their corresponding properties
         self.id = id
@@ -72,6 +67,5 @@ public struct UserDTO: Content {
         self.instagramHandle = instagramHandle
         self.profilePictureKey = profilePictureKey
         self.profilePictureUrl = profilePictureUrl
-        self.accepted = accepted
     }
 }

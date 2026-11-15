@@ -216,7 +216,6 @@ internal struct RegisterScreen: View {
             ].first { !$0 }
 
             baseEnvironmentConfig.isLoggedIn = true
-            baseEnvironmentConfig.isAccepted = false
         } catch let error as GenericErrors {
             phoneInputConfig.errorMessage = error.message
             verificationInputConfig.errorMessage = error.message

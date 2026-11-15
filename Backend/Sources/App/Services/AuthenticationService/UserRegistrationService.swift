@@ -61,8 +61,7 @@ internal struct UserRegistrationService: AuthenticationService {
         UserModel(
             id: identifier.id,
             username: identifier.name,
-            phoneNumber: config.payload.authCodePayload.phoneNumber,
-            accepted: false
+            phoneNumber: config.payload.authCodePayload.phoneNumber
         )
     }
 

@@ -32,9 +32,6 @@ public struct OnboardingScreen: View {
     /// Configuration for the navigation button
     @ObservedObject public var iconButtonConfig: IconButtonComponentConfig = .init()
 
-    /// State controlling whether to show the application screen
-    @State public var shouldShowApplyScreen: Bool = false
-
     /// State controlling whether to show the registration screen
     @State private var shouldShowRegisterScreen: Bool = false
 
@@ -77,8 +74,6 @@ public struct OnboardingScreen: View {
     public var body: some View {
         if shouldShowRegisterScreen {
             RegisterScreen()
-        } else if shouldShowApplyScreen {
-            generateApplyView()
         } else {
             generateOnboardingView()
         }
@@ -116,39 +111,12 @@ public struct OnboardingScreen: View {
         )
     }
 
-    /// Generates the application view shown after completing the onboarding flow
-    /// - Returns: A view containing the application information and continue button
-    @ViewBuilder
-    private func generateApplyView() -> some View {
-        OnboardingScreenFrame(
-            titleContent: {
-                InfoPairComponent(config: titleConfig) { config in
-                    config.title = "Apply to Join"
-                    config
-                        .description =
-                        """
-                        We are a closed community, accepting the highest quality candidates only. \
-                        If you are ambitious, click next!
-                        """
-                }
-            },
-            footerContent: {
-                IconButtonComponent(
-                    defaultIcon: .arrowRight
-                ) {
-                    shouldShowApplyScreen = false
-                    shouldShowRegisterScreen = true
-                }
-            }
-        ).animation(.bouncy, value: progressIndicatorConfig.currentStep)
-    }
-
     /// Handles navigation to the next screen in the onboarding flow
     /// - Updates the progress indicator and content when moving between screens
-    /// - Triggers transition to application screen when onboarding is complete
+    /// - Opens registration when onboarding is complete
     public func handleOnboardingNextScreen() {
         if progressIndicatorConfig.currentStep == onboardingScreenContent.count {
-            shouldShowApplyScreen = true
+            shouldShowRegisterScreen = true
             return
         }
 

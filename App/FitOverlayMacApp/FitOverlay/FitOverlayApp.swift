@@ -41,10 +41,6 @@ internal struct FitOverlayApp: App {
             }
 
             baseConfig.isLoggedIn = await launchManager.getAccessToken()
-            if baseConfig.isLoggedIn {
-                baseConfig.isAccepted = await launchManager
-                    .isUserAccepted()
-            }
         }
 
         baseConfig.isAppFinishedLoading = true

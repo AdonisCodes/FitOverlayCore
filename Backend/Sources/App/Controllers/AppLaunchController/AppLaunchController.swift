@@ -4,7 +4,6 @@
 // All rights reserved.
 
 import DataTypes
-import Fluent
 import Vapor
 
 /// Controller for handling app launch-related routes.
@@ -22,21 +21,15 @@ internal struct AppLaunchController: RouteCollection {
         appLaunchRoute.get("get-client-config", use: getClientConfig)
     }
 
-    /// Checks if the user is accepted.
-    /// - Parameter req: The request containing user information.
-    /// - Returns: A DTO indicating if the user is accepted.
-    /// - Throws: An error if the user ID is invalid or not found.
+    /// Reports that the signed-in account can use the app.
+    ///
+    /// Older clients call this before leaving the pending-review screen. Accounts are no longer
+    /// reviewed, so every authenticated caller is accepted.
+    /// - Parameter req: The authenticated request.
+    /// - Returns: A DTO with `accepted` set to true.
     @Sendable
-    public func isUserAccepted(req: Request) async throws -> UserIsAcceptedDTO {
-        let token = try await req.jwt.verify(as: JWTTokenPayload.self)
-        let userId = UUID(uuidString: token.userId)
-
-        if let userId {
-            let isAccepted = try await UserModel.find(userId, on: req.dbReadOnly)?.accepted ?? false
-            return UserIsAcceptedDTO(accepted: isAccepted)
-        } else {
-            throw GenericErrors.invalidUserId
-        }
+    public func isUserAccepted(req _: Request) async throws -> UserIsAcceptedDTO {
+        UserIsAcceptedDTO(accepted: true)
     }
 
     /// Retrieves the client configuration.
