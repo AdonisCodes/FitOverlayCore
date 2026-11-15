@@ -20,7 +20,6 @@ import SwiftUI
 /// - App loading state
 /// - User authentication state
 /// - Application update requirements
-/// - User application review status
 internal struct ContentView: View {
     /// The environment configuration object containing app state and user authentication information
     @EnvironmentObject public var baseEnvironmentConfig: BaseAppEnvironmentObject
@@ -34,17 +33,15 @@ internal struct ContentView: View {
     /// 1. Network connectivity
     /// 2. App loading status
     /// 3. App update requirements
-    /// 4. User authentication and acceptance status
+    /// 4. User authentication status
     public var body: some View {
         if networkChecker.isConnected {
             VStack {
                 if baseEnvironmentConfig.isAppFinishedLoading {
                     if baseEnvironmentConfig.shouldUpdateApp {
                         ForceUpdate()
-                    } else if baseEnvironmentConfig.isLoggedIn, baseEnvironmentConfig.isAccepted {
-                        LoginSuccessTemporary()
                     } else if baseEnvironmentConfig.isLoggedIn {
-                        PendingApplicationReview()
+                        LoginSuccessTemporary()
                     } else {
                         OnboardingAuthPickerScreen()
                     }

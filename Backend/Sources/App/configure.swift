@@ -146,6 +146,7 @@ internal struct DatabaseConfigurator {
         app.migrations.add(AddAcceptedColumnMigration1740658649())
         app.migrations.add(LicenseMigration1792627203())
         app.migrations.add(DeviceActivationMigration1792627204())
+        app.migrations.add(RemoveAcceptedColumnMigration1794787200())
     }
 }
 

@@ -12,9 +12,6 @@ public class BaseAppEnvironmentObject: ObservableObject {
     /// Indicates whether a user is currently logged into the application
     @Published public var isLoggedIn: Bool = false
 
-    /// Indicates whether the user has accepted the necessary terms and conditions
-    @Published public var isAccepted: Bool = false
-
     /// Indicates whether the application has completed its initial loading sequence
     @Published public var isAppFinishedLoading: Bool = false
 

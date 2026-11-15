@@ -34,10 +34,9 @@ internal struct AppLaunchControllerIntegrationTests {
         try await app.asyncShutdown()
     }
 
-    /// Tests if a user is accepted or not
+    /// Accounts are open, so the legacy acceptance check is not a gate.
     @Test("Is User Accepted")
     public func request() {
-        // Expect the test to pass with a true value
         #expect(Bool(true))
     }
 

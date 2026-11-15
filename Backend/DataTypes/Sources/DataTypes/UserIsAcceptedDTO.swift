@@ -5,12 +5,11 @@
 
 import Vapor
 
-/// A data transfer object (DTO) that represents whether a user is accepted.
+/// Legacy response for clients that still ask whether an account was approved.
+/// The app no longer reviews accounts, so `accepted` is always true.
 /// This struct conforms to Vapor's `Content` protocol for HTTP encoding/decoding.
 public struct UserIsAcceptedDTO: Content {
-    /// A boolean value indicating whether the user is accepted.
-    /// - `true` indicates the user is accepted
-    /// - `false` indicates the user is not accepted
+    /// Always true. Accounts are not reviewed.
     public var accepted: Bool
 
     /// Initializes a new UserIsAcceptedDTO instance.
